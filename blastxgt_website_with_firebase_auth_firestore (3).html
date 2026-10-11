@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <title>BLASTXGT - Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #020817 0%, #0c1b33 50%, #102a52 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .sky-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            background: #ffffff;
+            border-radius: 50%;
+            animation: twinkle var(--duration) infinite ease-in-out;
+            animation-delay: var(--delay);
+            opacity: var(--opacity);
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.25); }
+        }
+
+        @keyframes floatCloud {
+            0% { transform: translateX(-15%); }
+            100% { transform: translateX(115%); }
+        }
+
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.04);
+            filter: blur(55px);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1;
+            animation: floatCloud var(--speed) linear infinite;
+        }
+
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(5rem, 22vw, 30rem);
+            font-weight: 900;
+            color: rgba(96, 165, 250, 0.16);
+            letter-spacing: -0.03em;
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 2;
+            user-select: none;
+            text-align: center;
+            mix-blend-mode: overlay;
+            text-shadow: 0 0 100px rgba(56, 189, 248, 0.3);
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 8%;
+            background: rgba(3, 13, 26, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(56, 189, 248, 0.15);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .big-b-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: white;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+            animation: pulseGlow 3s infinite ease-in-out;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); }
+            50% { box-shadow: 0 0 25px rgba(56, 189, 248, 0.8); }
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ffffff 0%, #60a5fa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 25px;
+        }
+
+        nav ul li button {
+            background: none;
+            border: none;
+            color: #cbd5e1;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 8px 16px;
+            border-radius: 10px;
+            letter-spacing: 0.05em;
+        }
+
+        nav ul li button:hover, nav ul li button.active {
+            color: #38bdf8;
+            background: rgba(56, 189, 248, 0.12);
+            text-shadow: 0 0 12px rgba(96, 165, 250, 0.5);
+        }
+
+        .container {
+            position: relative;
+            z-index: 5;
+            max-width: 1200px;
+            margin: 120px auto 60px auto;
+            padding: 0 20px;
+        }
+
+        .tab-content {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px) scale(0.99);
+            transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .tab-content.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .section-box {
+            background: rgba(15, 23, 42, 0.68);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(56, 189, 248, 0.18);
+            border-radius: 20px;
+            padding: 35px;
+            margin-bottom: 35px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        h1 {
+            font-size: 1.6rem;
+            margin-bottom: 25px;
+            color: #ffffff;
+            letter-spacing: 0.02em;
+            border-left: 4px solid #38bdf8;
+            padding-left: 14px;
+            font-weight: 800;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .videos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .video-card {
+            background: rgba(3, 7, 18, 0.75);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(56, 189, 248, 0.15);
+            text-decoration: none;
+            color: #ffffff;
+            transition: all 0.35s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .video-card:hover {
+            transform: translateY(-6px);
+            border-color: #38bdf8;
+            box-shadow: 0 15px 35px rgba(56, 189, 248, 0.2);
+        }
+
+        .video-player-wrapper {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%;
+            background: #000000;
+        }
+
+        .video-player-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .video-info {
+            padding: 18px;
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: #f1f5f9;
+        }
+
+        .stream-card {
+            background: rgba(3, 7, 18, 0.85);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 15px 35px rgba(56, 189, 248, 0.15);
+        }
+
+        .stream-header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: rgba(56, 189, 248, 0.12);
+            border-bottom: 1px solid rgba(56, 189, 248, 0.25);
+        }
+
+        .stream-title-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .stream-title-info i {
+            color: #38bdf8;
+            font-size: 1.4rem;
+        }
+
+        .twitch-link-pill {
+            background: linear-gradient(135deg, #0284c7, #38bdf8);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+        }
+
+        .twitch-link-pill:hover {
+            background: linear-gradient(135deg, #0369a1, #0284c7);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin-top: 15px;
+        }
+
+        .game-card {
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            text-decoration: none;
+            color: #ffffff;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-card:hover {
+            transform: translateY(-8px);
+            border-color: #38bdf8;
+            box-shadow: 0 20px 40px rgba(56, 189, 248, 0.25);
+        }
+
+        .game-banner {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            overflow: hidden;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .game-banner.spaceland {
+            background: linear-gradient(135deg, #3b0764 0%, #1e1b4b 50%, #0f172a 100%);
+        }
+
+        .game-banner.roblox {
+            background: linear-gradient(135deg, #991b1b 0%, #451a03 50%, #0f172a 100%);
+        }
+
+        .game-banner.minecraft {
+            background: linear-gradient(135deg, #14532d 0%, #064e3b 50%, #0f172a 100%);
+        }
+
+        .game-banner-icon {
+            font-size: 3.8rem;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
+            transition: transform 0.4s ease;
+        }
+
+        .game-card:hover .game-banner-icon {
+            transform: scale(1.15) rotate(5deg);
+        }
+
+        .game-banner-text {
+            font-size: 1.1rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+            color: #e2e8f0;
+        }
+
+        .game-badge {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            background: linear-gradient(135deg, #0284c7, #38bdf8);
+            color: white;
+            padding: 5px 12px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            border-radius: 8px;
+            letter-spacing: 0.05em;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4);
+            z-index: 2;
+        }
+
+        .game-title {
+            padding: 22px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            background: rgba(3, 7, 18, 0.6);
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .game-title i {
+            color: #38bdf8;
+            transition: transform 0.3s ease;
+        }
+
+        .game-card:hover .game-title i {
+            transform: translateX(4px);
+        }
+
+        .request-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .request-input {
+            width: 100%;
+            background: rgba(3, 7, 18, 0.8);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            border-radius: 12px;
+            padding: 16px;
+            color: #ffffff;
+            font-size: 1rem;
+            outline: none;
+            resize: vertical;
+            min-height: 120px;
+            transition: border-color 0.3s ease;
+        }
+
+        .request-input:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+        }
+
+        .submit-btn {
+            align-self: flex-end;
+            background: linear-gradient(135deg, #0284c7, #38bdf8);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(2, 132, 199, 0.4);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(56, 189, 248, 0.5);
+        }
+
+        .requests-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .request-item {
+            background: rgba(3, 7, 18, 0.6);
+            border: 1px solid rgba(56, 189, 248, 0.15);
+            border-radius: 12px;
+            padding: 18px 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .request-text {
+            word-break: break-word;
+            font-size: 1.05rem;
+            color: #f1f5f9;
+        }
+
+        .read-btn {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid #10b981;
+            color: #34d399;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .read-btn:hover {
+            background: #10b981;
+            color: white;
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+        }
+
+        .delete-btn {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid #ef4444;
+            color: #f87171;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .delete-btn:hover {
+            background: #ef4444;
+            color: white;
+            box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+        }
+
+        .trash-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            border-top: 1px dashed rgba(56, 189, 248, 0.2);
+            padding-top: 30px;
+        }
+
+        .socials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .social-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: 16px;
+            padding: 30px;
+            text-decoration: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .social-card:hover {
+            transform: translateY(-5px);
+            border-color: #38bdf8;
+            box-shadow: 0 15px 35px rgba(56, 189, 248, 0.25);
+        }
+
+        .social-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            flex-shrink: 0;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .social-card.youtube .social-icon { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
+        .social-card.discord .social-icon { background: linear-gradient(135deg, #6366f1, #4f46e5); color: white; }
+        .social-card.twitch .social-icon { background: linear-gradient(135deg, #0284c7, #38bdf8); color: white; }
+
+        .social-info h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .social-info p {
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        .support-float-btn {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            z-index: 99;
+            background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
+            color: white;
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 10px 30px rgba(56, 189, 248, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.3);
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid rgba(56, 189, 248, 0.6);
+            animation: bounceBtn 3s infinite ease-in-out;
+        }
+
+        .support-float-btn:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 15px 40px rgba(56, 189, 248, 0.7), inset 0 2px 6px rgba(255, 255, 255, 0.5);
+            border-color: #ffffff;
+        }
+
+        .support-float-btn i {
+            font-size: 1.3rem;
+            margin-bottom: 2px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .support-float-btn span {
+            font-size: 0.55rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes bounceBtn {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+
+        @media (max-width: 768px) {
+            nav { padding: 15px 5px; }
+            nav ul { gap: 10px; }
+            .container { margin-top: 100px; }
+            .support-float-btn { width: 62px; height: 62px; bottom: 15px; right: 15px; }
+            .support-float-btn i { font-size: 1.1rem; }
+            .support-float-btn span { font-size: 0.48rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sky-bg" id="skyBg"></div>
+    <div class="cloud w-[600px] h-[300px] top-[15%] left-[-20%]" style="--speed: 60s;"></div>
+    <div class="cloud w-[800px] h-[400px] top-[50%] left-[-30%]" style="--speed: 85s; animation-delay: -25s;"></div>
+    
+    <div class="watermark">BLASTXGT</div>
+
+    <!-- Navigation Bar -->
+    <nav>
+        <a class="logo-container" onclick="switchTab('home')">
+            <div class="big-b-icon">B</div>
+            <div class="logo-text">BLASTXGT</div>
+        </a>
+        <ul>
+            <li><button onclick="switchTab('home')" id="nav-home" class="active">HOME</button></li>
+            <li><button onclick="switchTab('requests')" id="nav-requests">REQUESTS</button></li>
+            <li><button onclick="switchTab('socials')" id="nav-socials">SOCIALS</button></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content Container -->
+    <div class="container">
+        
+        <div id="tab-home" class="tab-content active">
+            <div class="section-box">
+                <h1>LATEST VIDEOS</h1>
+                <div class="videos-grid" id="youtubeVideosGrid">
+                    <div class="video-card">
+                        <div class="video-player-wrapper">
+                            <iframe src="https://www.youtube-nocookie.com/embed/Ykc1gpuZIps?start=93&enablejsapi=1" 
+                                    title="BlastBoost Latest Video" 
+                                    referrerpolicy="strict-origin-when-cross-origin" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen></iframe>
+                        </div>
+                        <div class="video-info">BlastBoost Latest Upload</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-box">
+                <h1>LATEST STREAM (LIVE)</h1>
+                <div class="stream-card">
+                    <div class="stream-header-bar">
+                        <div class="stream-title-info">
+                            <i class="fa-brands fa-twitch"></i>
+                            <span>BLASTXGT Live Stream</span>
+                        </div>
+                        <a href="https://www.twitch.tv/blastboost1232" target="_blank" rel="noopener noreferrer" class="twitch-link-pill">
+                            Open on Twitch <i class="fa-solid fa-external-link-alt" style="font-size: 0.75rem; margin-left: 4px;"></i>
+                        </a>
+                    </div>
+                    <div class="video-player-wrapper">
+                        <iframe src="https://player.twitch.tv/?channel=blastboost1232&parent=shokedgt.github.io&parent=localhost&parent=127.0.0.1" 
+                                id="twitchEmbedFrame"
+                                sandbox="allow-same-origin allow-scripts allow-popups allow-modals"
+                                allowfullscreen="true" 
+                                scrolling="no" 
+                                frameborder="0"></iframe>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-box">
+                <h1>Featured Games</h1>
+                <div class="games-grid">
+                    <a href="https://store.steampowered.com/app/292730/Call_of_Duty_Infinite_Warfare/" target="_blank" rel="noopener noreferrer" class="game-card">
+                        <div class="game-banner spaceland">
+                            <span class="game-badge">ZOMBIES</span>
+                            <div class="game-banner-icon">🧟‍♂️🎡</div>
+                            <div class="game-banner-text">Infinite Warfare</div>
+                        </div>
+                        <div class="game-title">
+                            <span>Spaceland Zombies Game</span>
+                            <i class="fa-solid fa-arrow-right-long"></i>
+                        </div>
+                    </a>
+
+                    <a href="https://www.roblox.com/home" target="_blank" rel="noopener noreferrer" class="game-card">
+                        <div class="game-banner roblox">
+                            <span class="game-badge">SOCIAL</span>
+                            <div class="game-banner-icon">🧱🎮</div>
+                            <div class="game-banner-text">Roblox Universe</div>
+                        </div>
+                        <div class="game-title">
+                            <span>Roblox Social & Minigames</span>
+                            <i class="fa-solid fa-arrow-right-long"></i>
+                        </div>
+                    </a>
+
+                    <a href="https://www.minecraft.net/en-us" target="_blank" rel="noopener noreferrer" class="game-card">
+                        <div class="game-banner minecraft">
+                            <span class="game-badge">SANDBOX</span>
+                            <div class="game-banner-icon">⛏️🌲</div>
+                            <div class="game-banner-text">Minecraft Sandbox</div>
+                        </div>
+                        <div class="game-title">
+                            <span>Minecraft Sandbox</span>
+                            <i class="fa-solid fa-arrow-right-long"></i>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-requests" class="tab-content">
+            <div class="section-box">
+                <h1>SEND A REQUEST</h1>
+                <div class="request-form">
+                    <textarea id="requestInput" class="request-input" placeholder="Type your video idea, game suggestion, or message here... (Anti-spam active)"></textarea>
+                    <button onclick="submitRequest()" class="submit-btn">Submit Request</button>
+                </div>
+            </div>
+
+            <div class="section-box">
+                <h1>COMMUNITY REQUESTS INBOX</h1>
+                <div id="requestsList" class="requests-list">
+                    <div style="color: #94a3b8; text-align: center; padding: 20px;">Connecting to Firebase Cloud...</div>
+                </div>
+
+                <!-- Admin Trash Can Section - Explicitly hidden from regular visitors -->
+                <div class="trash-header" id="trashHeaderSection" style="display: none;">
+                    <h2 style="font-size: 1.2rem; color: #94a3b8; display: flex; align-items: center; gap: 10px;">
+                        <i class="fa-solid fa-trash-can" style="color: #ef4444;"></i> Secret Admin Trash Can (<span id="trashCount">0</span> items)
+                    </h2>
+                </div>
+                <div id="trashList" class="requests-list" style="display: none;"></div>
+            </div>
+        </div>
+
+        <div id="tab-socials" class="tab-content">
+            <div class="section-box">
+                <h1>CONNECT WITH ME</h1>
+                <div class="socials-grid">
+                    <a href="https://www.youtube.com/@blastBoost" target="_blank" rel="noopener noreferrer" class="social-card youtube">
+                        <div class="social-icon"><i class="fa-brands fa-youtube"></i></div>
+                        <div class="social-info">
+                            <h3>YouTube</h3>
+                            <p>Watch gameplay & streams</p>
+                        </div>
+                    </a>
+
+                    <a href="https://discord.com" target="_blank" rel="noopener noreferrer" class="social-card discord">
+                        <div class="social-icon"><i class="fa-brands fa-discord"></i></div>
+                        <div class="social-info">
+                            <h3>Discord</h3>
+                            <p>Join the community chat</p>
+                        </div>
+                    </a>
+
+                    <a href="https://www.twitch.tv/blastboost1232" target="_blank" rel="noopener noreferrer" class="social-card twitch">
+                        <div class="social-icon"><i class="fa-brands fa-twitch"></i></div>
+                        <div class="social-info">
+                            <h3>Twitch</h3>
+                            <p>Catch live here</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer" class="support-float-btn" title="Support Us">
+        <i class="fa-solid fa-heart"></i>
+        <span>Support</span>
+    </a>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global Firebase Configuration
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'blastxgt-hub-app';
+        
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            apiKey: "AIzaSyA7hmU8Fkt2hvtsi5NAyurNvx2n3Tjy62A",
+            authDomain: "blastxgt-a7d73.firebaseapp.com",
+            projectId: "blastxgt-a7d73",
+            storageBucket: "blastxgt-a7d73.firebasestorage.app",
+            messagingSenderId: "158383313228",
+            appId: "1:158383313228:web:0c8ae1c470448d3e063fe9",
+            measurementId: "G-B8161YZDGV"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        let currentUser = null;
+        let lastSubmitTime = 0; // 15-second anti-spam cooldown
+
+        // ==========================================
+        // YOUR HARDCODED OWNER UID FOR MAXIMUM SECURITY
+        // ==========================================
+        const OWNER_UID = "DFC1ZSoH0EUTuvdKzxcJLj2vtcb2";
+
+        function isAdmin() {
+            if (!currentUser) return false;
+            return currentUser.uid === OWNER_UID;
+        }
+
+        // Authenticate user anonymously
+        async function initAuth() {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (err) {
+                console.error("Firebase auth error:", err);
+            }
+        }
+
+        initAuth();
+
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            if (user) {
+                console.log("Logged in with UID:", user.uid);
+                setupRealtimeListeners();
+            }
+        });
+
+        // Firestore paths
+        const requestsCol = collection(db, 'artifacts', appId, 'public', 'data', 'community_requests');
+        const trashCol = collection(db, 'artifacts', appId, 'public', 'data', 'community_trash');
+
+        // Submit new request
+        window.submitRequest = async function() {
+            const input = document.getElementById('requestInput');
+            const val = input.value.trim();
+            
+            if (!val) {
+                alertMessage("Please enter a message!");
+                return;
+            }
+
+            const now = Date.now();
+            if (now - lastSubmitTime < 15000) {
+                const remaining = Math.ceil((15000 - (now - lastSubmitTime)) / 1000);
+                alertMessage(`Anti-Spam: Please wait ${remaining}s before sending another request.`);
+                return;
+            }
+
+            if (val.length > 500) {
+                alertMessage("Message is too long! Max 500 characters allowed.");
+                return;
+            }
+
+            try {
+                await addDoc(requestsCol, {
+                    text: val,
+                    createdAt: Date.now(),
+                    sender: currentUser ? currentUser.uid : 'anonymous'
+                });
+                lastSubmitTime = Date.now();
+                input.value = '';
+                alertMessage("Request submitted live to the cloud!");
+            } catch (e) {
+                console.error("Error adding request:", e);
+                alertMessage("Error submitting request. Please try again.");
+            }
+        }
+
+        // Owner action: move message to trash
+        window.moveToTrash = async function(id, text) {
+            if (!isAdmin()) {
+                alertMessage("Permission denied: Owner access only.");
+                return;
+            }
+            try {
+                await addDoc(trashCol, {
+                    text: text,
+                    deletedAt: Date.now()
+                });
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'community_requests', id));
+                alertMessage("Message moved to Trash!");
+            } catch (e) {
+                console.error("Error moving to trash:", e);
+            }
+        }
+
+        // Owner action: delete permanently from trash
+        window.deletePermanently = async function(id) {
+            if (!isAdmin()) return;
+            try {
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'community_trash', id));
+                alertMessage("Permanently deleted from Trash.");
+            } catch (e) {
+                console.error("Error deleting permanently:", e);
+            }
+        }
+
+        // Set up realtime Firestore listeners
+        let unsubscribeRequests = null;
+        let unsubscribeTrash = null;
+
+        function setupRealtimeListeners() {
+            if (unsubscribeRequests) unsubscribeRequests();
+            if (unsubscribeTrash) unsubscribeTrash();
+
+            // Listen to active community requests
+            unsubscribeRequests = onSnapshot(requestsCol, (snapshot) => {
+                const reqs = [];
+                snapshot.forEach(docSnap => {
+                    reqs.push({ id: docSnap.id, ...docSnap.data() });
+                });
+                reqs.sort((a, b) => b.createdAt - a.createdAt);
+                renderRequestsUI(reqs);
+            }, (error) => {
+                console.error("Requests listener error:", error);
+            });
+
+            // Listen to trash collection ONLY if Owner is authenticated
+            if (isAdmin()) {
+                unsubscribeTrash = onSnapshot(trashCol, (snapshot) => {
+                    const trash = [];
+                    snapshot.forEach(docSnap => {
+                        trash.push({ id: docSnap.id, ...docSnap.data() });
+                    });
+                    trash.sort((a, b) => b.deletedAt - a.deletedAt);
+                    renderTrashUI(trash);
+                }, (error) => {
+                    console.error("Trash listener error:", error);
+                });
+            } else {
+                renderTrashUI([]);
+            }
+        }
+
+        // Render public community requests
+        function renderRequestsUI(reqs) {
+            const reqsList = document.getElementById('requestsList');
+            const userIsAdmin = isAdmin();
+
+            if (reqs.length === 0) {
+                reqsList.innerHTML = '<div style="color: #94a3b8; text-align: center; padding: 20px;">No community requests yet. Be the first to send one!</div>';
+                return;
+            }
+
+            reqsList.innerHTML = reqs.map(r => `
+                <div class="request-item">
+                    <div class="request-text">${escapeHtml(r.text)}</div>
+                    ${userIsAdmin ? `
+                        <button onclick="moveToTrash('${r.id}', '${escapeHtml(r.text).replace(/'/g, "\\'")}')" class="read-btn">
+                            <i class="fa-solid fa-check"></i> Read & Trash
+                        </button>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        // Render owner-only trash can
+        function renderTrashUI(trash) {
+            const trashList = document.getElementById('trashList');
+            const trashHeader = document.getElementById('trashHeaderSection');
+            const trashCountSpan = document.getElementById('trashCount');
+            const userIsAdmin = isAdmin();
+
+            if (!userIsAdmin) {
+                if (trashHeader) trashHeader.style.display = 'none';
+                if (trashList) trashList.style.display = 'none';
+                return;
+            }
+
+            if (trashHeader) trashHeader.style.display = 'flex';
+            if (trashList) trashList.style.display = 'flex';
+            if (trashCountSpan) trashCountSpan.textContent = trash.length;
+
+            if (trash.length === 0) {
+                trashList.innerHTML = '<div style="color: #64748b; text-align: center; padding: 10px; font-size: 0.9rem;">Trash can is empty.</div>';
+                return;
+            }
+
+            trashList.innerHTML = trash.map(t => `
+                <div class="request-item" style="opacity: 0.75;">
+                    <div class="request-text" style="text-decoration: line-through; color: #94a3b8;">${escapeHtml(t.text)}</div>
+                    <button onclick="deletePermanently('${t.id}')" class="delete-btn">
+                        <i class="fa-solid fa-trash"></i> Delete
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        function alertMessage(msg) {
+            const div = document.createElement('div');
+            div.style.cssText = "position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:rgba(2,132,199,0.95); color:white; padding:12px 24px; border-radius:12px; font-weight:700; z-index:1000; box-shadow:0 10px 25px rgba(0,0,0,0.5);";
+            div.textContent = msg;
+            document.body.appendChild(div);
+            setTimeout(() => div.remove(), 3000);
+        }
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const sky = document.getElementById('skyBg');
+            if (sky) {
+                for (let i = 0; i < 70; i++) {
+                    const star = document.createElement('div');
+                    star.className = 'star';
+                    const size = Math.random() * 2.5 + 1;
+                    star.style.width = `${size}px`;
+                    star.style.height = `${size}px`;
+                    star.style.top = `${Math.random() * 100}%`;
+                    star.style.left = `${Math.random() * 100}%`;
+                    star.style.setProperty('--duration', `${Math.random() * 3 + 2}s`);
+                    star.style.setProperty('--delay', `${Math.random() * 3}s`);
+                    star.style.setProperty('--opacity', Math.random() * 0.7 + 0.3);
+                    sky.appendChild(star);
+                }
+            }
+        });
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('nav ul li button').forEach(el => el.classList.remove('active'));
+            
+            const targetTab = document.getElementById(`tab-${tabId}`);
+            if (targetTab) targetTab.classList.add('active');
+            
+            const targetBtn = document.getElementById(`nav-${tabId}`);
+            if (targetBtn) targetBtn.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
